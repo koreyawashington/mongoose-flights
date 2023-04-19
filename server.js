@@ -14,7 +14,7 @@ app.engine('jsx', require('jsx-view-engine').createEngine());
 
 //* settling a middleware to run in our app
 app.use((req, res, next) => {
-    console.log(req.url);
+    console.log('I run on all routes!');
     next()
 })
 //* parses the data from the request
@@ -31,22 +31,28 @@ app.get('/flights', (req, res) => {
     })
     })
 
+    app.get('/flights/new', (req, res) => {
+        res.render('New')
+        })
+        
+
  //* Post method (accept data from the form)
 app.post('/flights', (req, res) => {
     console.log(req.body);
-
-    Flight.create(req.body, (error, createdFlights) => {
+    Flight.create(req.body).then(Flight  => {
         // res.send(createdFlights)
         res.redirect('/flights')
+    }).catch((error) => {
+        console.error(error);
     })
-})  
+}) 
 
-app.get('/flights/new', (req, res) => {
-res.render('New')
+//show route
+app.get("/flights/:id", (req, res) => {
+    Flight.findById(req.params.id, (error, foundFlight) => {
+        res.render('Show', {Flight: foundFlight})
+    })
 })
-
-
-
 
 
 
